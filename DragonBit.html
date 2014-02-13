@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +7,16 @@
   table, tr, td, div {border:1px solid red; }
 </style>
 <body>
+<table id='powertable' cellpadding='0' cellpadding='0'>
+  <tr>
+    <td><button id='power1'>Hit</button></td>
+    <td><button id='power2'>ERROR</button></td>
+  </tr>
+</table>
+<table id='defensivetable' cellpadding='0' cellpadding='0'>
+  <tr>
+    <td><button id='potionUse'>Use Potion</button></td>
+  </tr>
 <table id ="classtable" cellpadding="0" cellpadding="0">
   <tr>
     <td>Class</td>
@@ -41,8 +50,8 @@
   </tr>
   <tr>
     <td><input id ="reset" type = "button" value = " Reset "></td>
-    <td><input id='attack' type='button' value='Attack!' ></td>
-    <td><input id="potionUse" type="button" value="Use Potion"></td>
+    <td><input id='attack' type='button' value='Offensive' ></td>
+    <td><input id="defense" type="button" value="Defensive"></td>
   </tr>
   <tr>
     <td id='PlayerHealth'></td>
@@ -59,30 +68,41 @@
 </body>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
+Defensive = function(){
+  $("#turntable").hide();
+  $("#defensivetable").show();
+  $("#potionUse").on("click", PotionUse);
+
+}
 //creation of player and NPC objects
 dragonObj=new Object;
-ninjaObj=new Object;
 currentNPC ="ERROR"
 currentNPCRandomizer = Math.floor((Math.random)()*2 +1)
+
+ninjaObj = {
+  armorclass: 1,  
+  health: 10,
+  go: true,
+  hitmiss: (Math.random)(),
+  damage: Math.floor((Math.random)()*2) + 1,
+  register: "Ninja",
+  armorpen: 2,
+  alignment: "Evil"
+};
+
+dragonObj.register = "Dragon"
+dragonObj.armorpen = 0
+dragonObj.health = 15;
+dragonObj.go = true
+dragonObj.armorclass = 1
+
 if(currentNPCRandomizer == 1){
   currentNPC = ninjaObj
 }
 else{
   currentNPC = dragonObj
 }
-ninjaObj.armorclass = 1
-ninjaObj.health = 10;
-ninjaObj.go = true
-ninjaObj.hitmiss = (Math.random)();
-ninjaObj.damage = Math.floor((Math.random)()*2 +1);
-ninjaObj.register = "Ninja"
-ninjaObj.armorpen = 2
-ninjaObj.alignment = "Evil"
-dragonObj.register = "Dragon"
-dragonObj.armorpen = 0
-dragonObj.health = 15;
-dragonObj.go = true
-dragonObj.armorclass = 1
+
 $NPCHealthText = document.getElementById("NPCHealth");
 $NPCHealthText.innerHTML += currentNPC.health;
 dragonObj.hitmiss = (Math.random)()
@@ -100,6 +120,9 @@ $(document).ready(function(){
   $("#Scout").on("click", scoutSel);
   $("#attack").on("click", attacksetup);
   $("#reset").on("click", reset);
+  $("#powertable").hide()
+  $("#defensivetable").hide()
+  $("#defense").on("click", Defensive)
  });
 //log function to replace stupid use of console.log, curse you CA!!!
 log = function (input, colorChoice) {
@@ -121,7 +144,7 @@ playerObj.armorclass = 0
 playerObj.armorpen = 0
 $("#turntable").show()
 $("#classtable").hide()
-$("#potionUse").on("click", PotionUse)
+$("#potionUse").on("click", Defensive)
 }
 
 //if marshall selected
@@ -139,7 +162,7 @@ $PlayerHealthText.innerHTML += playerObj.health;
 //playerObj.marshallDamage = Math.floor((Math.random)() *2 +1) - .5
 $("#turntable").show()
 $("#classtable").hide()
-$("#potionUse").on("click", PotionUse)
+$("#potionUse").on("click", Defensive)
 }
 
 //if scout selected
@@ -157,7 +180,7 @@ $PlayerHealthText.innerHTML += playerObj.health;
 //playerObj.scoutDamage = Math.floor((Math.random)() *2 +1)
 $("#turntable").show()
 $("#classtable").hide()
-$("#potionUse").on("click", PotionUse)
+$("#potionUse").on("click", Defensive)
 }
 
 
@@ -171,12 +194,14 @@ PotionUse = function (){
     playerObj.health = playerObj.health + 5
     $("#PlayerHealth").empty();
     $PlayerHealthText.innerHTML += playerObj.health;
+    log("You gained 5 health!")
     redo = false
     attack(currentNPC, playerObj)
+    $("#turntable").show()
     }
   else if(playerObj.potioncount <= 0){
     log("You have no potions to use")
-    $("#attack").show()
+    $("#turntable").show()
   }
 }
 
