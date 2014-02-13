@@ -61,28 +61,33 @@
 <script>
 //creation of player and NPC objects
 dragonObj=new Object;
-ninjaObj=new Object;
 currentNPC ="ERROR"
 currentNPCRandomizer = Math.floor((Math.random)()*2 +1)
+
+ninjaObj = {
+  armorclass: 1,  
+  health: 10,
+  go: true,
+  hitmiss: (Math.random)(),
+  damage: Math.floor((Math.random)()*2) + 1,
+  register: "Ninja",
+  armorpen: 2,
+  alignment: "Evil"
+};
+
+dragonObj.register = "Dragon"
+dragonObj.armorpen = 0
+dragonObj.health = 15;
+dragonObj.go = true
+dragonObj.armorclass = 1
+
 if(currentNPCRandomizer == 1){
   currentNPC = ninjaObj
 }
 else{
   currentNPC = dragonObj
 }
-ninjaObj.armorclass = 1
-ninjaObj.health = 10;
-ninjaObj.go = true
-ninjaObj.hitmiss = (Math.random)();
-ninjaObj.damage = Math.floor((Math.random)()*2 +1);
-ninjaObj.register = "Ninja"
-ninjaObj.armorpen = 2
-ninjaObj.alignment = "Evil"
-dragonObj.register = "Dragon"
-dragonObj.armorpen = 0
-dragonObj.health = 15;
-dragonObj.go = true
-dragonObj.armorclass = 1
+
 $NPCHealthText = document.getElementById("NPCHealth");
 $NPCHealthText.innerHTML += currentNPC.health;
 dragonObj.hitmiss = (Math.random)()
