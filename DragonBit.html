@@ -5,7 +5,30 @@
 <meta charset=utf-8 />
 <title>Dragon Bit Version 1.7DEV</title>
 <style>
-  table, tr, td, div {border:1px solid red; }
+  /*table, tr, td, div {border:1px solid red; }*/
+
+  table {
+    font-family: verdana,arial,sans-serif;
+    font-size:11px;
+    color:#333333;
+    border-width: 1px;
+    border-color: #666666;
+    border-collapse: collapse;
+  }
+  table th {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #666666;
+    background-color: #dedede;
+  }
+  table td {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #666666;
+    background-color: #ffffff;
+  }
 
   #powertable, #defensivetable {display: none;}
 </style>
@@ -24,13 +47,13 @@
   </tr>
 </table>
 
-<table id ="classtable" cellpadding="0" cellpadding="0">
+<table id="classtable" cellpadding="0" cellpadding="0">
   <tr>
-    <td>Class</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>Discription</td>
-    <td>Selection</td>
+    <th>Class</th>
+    <th>&nbsp;</th>
+    <th>&nbsp;</th>
+    <th>Discription</th>
+    <th>Selection</th>
   </tr>
   <tr>
     <td>Scout</td>
