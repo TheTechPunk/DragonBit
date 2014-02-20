@@ -8,16 +8,20 @@
   table, tr, td, div {border:1px solid red; }
 </style>
 <body>
+
 <table id='powertable' cellpadding='0' cellpadding='0'>
   <tr>
     <td><button id='power1'>Hit</button></td>
     <td><button id='power2'>ERROR</button></td>
   </tr>
 </table>
+
 <table id='defensivetable' cellpadding='0' cellpadding='0'>
   <tr>
     <td><button id='potionUse'>Use Potion</button></td>
   </tr>
+</table>
+
 <table id ="classtable" cellpadding="0" cellpadding="0">
   <tr>
     <td>Class</td>
@@ -43,6 +47,8 @@
     <td>Nimble: Hits twice, with second hit doing half<td>
     <td><input id="Quickstep" type = "button" value = "Chose QuickStep"></td>
   </tr>
+</table>  
+
 <table id="turntable" cellpadding="0" cellpadding="0">
   <tr>
     <td>Player HP</td>
@@ -61,12 +67,10 @@
   </tr>
 </table>
 
-<div id='log' cols='20' rows='10'  >
-<br>
-</div>
+<div id='log' cols='20' rows='10'  ></div>
 
-  
 </body>
+
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
 Defensive = function(){
