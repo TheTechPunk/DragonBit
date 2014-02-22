@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset=utf-8 />
-<title>Dragon Bit Version 1.7DEV</title>
+<title>Dragon Bit Version 1.7</title>
 <style>
   /*table, tr, td, div {border:1px solid red; }*/
 
@@ -43,7 +43,7 @@
 
 <table id='defensivetable' cellpadding='0' cellpadding='0'>
   <tr>
-    <td><button id='potionUse'>Use Potion</button></td>
+    <th><button id='potionUse'>Use Potion</button></td>
   </tr>
 </table>
 
@@ -196,6 +196,7 @@ $PlayerHealthText.innerHTML += playerObj.health;
 $("#turntable").show()
 $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
+$("#power2").hide()
 }
 
 //if scout selected
@@ -222,7 +223,7 @@ PotionUse = function (){
   if(playerObj.potioncount >= 1){
     playerObj.potioncount = playerObj.potioncount - 1
     if(playerObj.potioncount >= 0){
-      $("#potionUse").hide()
+      $("#defensivetable").hide()
     }
     playerObj.health = playerObj.health + 5
     $("#PlayerHealth").empty();
@@ -306,6 +307,13 @@ attack = function(attacker, defender){
 reset = function(){
   location.reload()
 };
+debug = function(){
+  console.log("WARNING, this is for developing purposes and breaks game")
+  $("#defensivetable").show()
+  $("powertable").show()
+  $("#turntable").show()
+  $("classtable").show()
+}
 </script>
 
 </head>
