@@ -36,14 +36,14 @@
 
 <table id='powertable' cellpadding='0' cellpadding='0'>
   <tr>
-    <td><button id='power1'>Hit</button></td>
-    <td><button id='power2'>ERROR</button></td>
+    <th><button id='power1'>Hit</button></th>
+    <th><input id='power2' type="button" value="ERROR" style="display: inline"></input></th>
   </tr>
 </table>
 
 <table id='defensivetable' cellpadding='0' cellpadding='0'>
   <tr>
-    <th><button id='potionUse'>Use Potion</button></td>
+    <th><button id='potionUse'>Use Potion</button></th>
   </tr>
 </table>
 
@@ -110,24 +110,28 @@ Defensive = function(){
 //creation of player and NPC objects
 dragonObj=new Object;
 currentNPC ="ERROR"
-currentNPCRandomizer = Math.floor((Math.random)()*2 +1)
+currentNPCRandomizer = Math.floor((Math.random)()*2 +2)
 
 ninjaObj = {
-  armorclass: 1,  
+  armorclass: 1,
+  armorclassOG: 1,  
   health: 10,
   go: true,
   hitmiss: (Math.random)(),
-  damage: Math.floor((Math.random)()*2) + 1,
+  damage: Math.floor((Math.random)()*2) + 2,
   register: "Ninja",
   armorpen: 2,
+  armorpenOG: 2,
   alignment: "Evil"
 };
 
 dragonObj.register = "Dragon"
-dragonObj.armorpen = 0
+dragonObj.armorpen = 2
+dragonObj.armorpenOG = 2
 dragonObj.health = 15;
 dragonObj.go = true
-dragonObj.armorclass = 1
+dragonObj.armorclass = 2
+dragonObj.armorclassOG = 2
 
 if(currentNPCRandomizer == 1){
   currentNPC = ninjaObj
@@ -139,7 +143,7 @@ else{
 $NPCHealthText = document.getElementById("NPCHealth");
 $NPCHealthText.innerHTML += currentNPC.health;
 dragonObj.hitmiss = (Math.random)()
-dragonObj.damage = Math.floor((Math.random)()*2 +1);
+dragonObj.damage = Math.floor((Math.random)()*2 )+2;
 dragonObj.alignment = "Evil"
 playerObj=new Object;
 playerObj.register = "You"
@@ -151,12 +155,19 @@ $(document).ready(function(){
   $("#turntable").hide();
   $("#Quickstep").on("click", quickstepSel);
   $("#Scout").on("click", scoutSel);
-  $("#attack").on("click", attacksetup);
+  $("#attack").on("click", openOffensiveTable);
   $("#reset").on("click", reset);
   $("#powertable").hide()
   $("#defensivetable").hide()
   $("#defense").on("click", Defensive)
+  $("#turntable").hide()
+  $("#power2").on("click", specialAttack)
+  $("#power1").on("click", attacksetup)
  });
+openOffensiveTable = function(){
+  $("#powertable").show()
+  $("#turntable").hide()
+}
 //log function to replace stupid use of console.log, curse you CA!!!
 log = function (input, colorChoice) {
    $('#log').prepend("<p style='color:" + colorChoice + "'>" + input + "</p>");
@@ -169,57 +180,75 @@ playerObj.potioncount = 1
 classOfPlayer = 1
 playerObj.health = 7
 playerObj.hitmiss = (Math.random)();
-playerObj.damage = Math.floor((Math.random)() *2 +1) + Math.floor((Math.random)() *2 +1 /2);
+playerObj.damage = Math.floor((Math.random)() *2 +2) + Math.floor((Math.random)() *2 +2 /2);
 $PlayerHealthText = document.getElementById("PlayerHealth");
 $PlayerHealthText.innerHTML += playerObj.health;
 //playerObj.quickstepDamage = Math.floor((Math.random)() *2 +1) + Math.floor((Math.random)() *2 +1 /2)
-playerObj.armorclass = 0
-playerObj.armorpen = 0
+playerObj.armorclass = 1
+playerObj.armorpen = 1
 $("#turntable").show()
 $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
+playerObj.ID = 1
 }
 
 //if marshall selected
 //set player vars to:
 marshallSel = function(){
-playerObj.armorpen = 0
-playerObj.armorclass = 3
+playerObj.armorpen = 1
+playerObj.armorclass = 4
+playerObj.armorpenOG = 1
+playerObj.armorclassOG = 4
 playerObj.potioncount = 1
 classOfPlayer = 2
 playerObj.health = 10;
 playerObj.hitmiss = (Math.random)();
-playerObj.damage = Math.floor((Math.random)() *2 +1) - .5;
+playerObj.damage = Math.floor((Math.random)() *2 +2) - .5;
 $PlayerHealthText = document.getElementById("PlayerHealth");
 $PlayerHealthText.innerHTML += playerObj.health;
 //playerObj.marshallDamage = Math.floor((Math.random)() *2 +1) - .5
 $("#turntable").show()
 $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
-$("#power2").hide()
+playerObj.ID = 2
 }
 
 //if scout selected
 //set player vars to:
 scoutSel = function(){
 playerObj.potioncount = 1
-playerObj.armorclass = 0
-playerObj.armorpen = 2
+playerObj.armorclass = 1
+playerObj.armorpen = 4
 classOfPlayer = 3
 playerObj.health = 10;
 playerObj.hitmiss = (Math.random)();
-playerObj.damage = Math.floor((Math.random)() *2 +1) ;
+playerObj.damage = Math.floor((Math.random)() *2 +2) ;
 $PlayerHealthText = document.getElementById("PlayerHealth");
 $PlayerHealthText.innerHTML += playerObj.health;
 //playerObj.scoutDamage = Math.floor((Math.random)() *2 +1)
 $("#turntable").show()
 $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
+playerObj.ID = 3
 }
 
-
+specialAttack = function(){
+if(playerObj.ID == 1){
+  log("Sorry about the mess, this isnt ready for this class yet.")
+}
+else if(playerObj.ID == 2){
+  $("#powertable").hide()
+  log("You get ready to quickly jab")
+  currentNPC.health = currentNPC.health - currentNPC.damage / 2
+  redo = false
+  attack(currentNPC, playerObj)
+  log("You take the chance to jab!")
+}
+else if(playerObj.ID == 3){
+  log("Sorry about the mess, this isnt ready for this class yet.")
+}
+}
 PotionUse = function (){
-  $("#attack").hide()
   if(playerObj.potioncount >= 1){
     playerObj.potioncount = playerObj.potioncount - 1
     if(playerObj.potioncount >= 0){
@@ -245,12 +274,13 @@ rerandomize = function(){
   dragonObj.hitmiss = (Math.random)();
   dragonObj.damage = Math.floor((Math.random)() *2 + 1);
   playerObj.hitmiss = (Math.random)()
-  playerObj.damage = playerObj.damage
+  playerObj.damage = Math.floor((Math.random)() *2 +2) 
   ninjaObj.hitmiss = (Math.random)();
   ninjaObj.damage = Math.floor((Math.random)()*2 +1);
 }
 
 attacksetup = function(customsel1, customsel2){
+  $("#powertable").hide()
   redo = true
   attack(playerObj, currentNPC)
 }
@@ -258,17 +288,37 @@ attacksetup = function(customsel1, customsel2){
 //attack funtion, main game logic storage
 attack = function(attacker, defender){
   if(attacker.hitmiss >= .25){
-    $("#attack").hide()
-    if(attacker.armorpen > defender.armorclass){
-      attacker.damage = attacker.damage + defender.armorclass
-      defender.health = defender.health - attacker.damage
+    //$("#powertable").hide()
+    console.log(attacker.damage)
+    if(attacker.armorpen < defender.armorclass){
+      //if armor is tougher than pen: half armor and subtract from dmg
+      defender.armorclass = defender.armorclass / 4
+      attacker.damage =  attacker.damage - defender.armorclass
+      if(attacker.damage <= 0){
+        if(attacker.alignment == "Good"){
+          log("Your attack was negated!")
+        }
+        else{
+          log("The " + currentNPC.register + "'s attack was negated!")
+        }
+      }
+      else{
+        defender.health = defender.health - attacker.damage
+        log(attacker.register + " hit for " + attacker.damage)
+      }
+      attacker.armorpen = attacker.armorpenOG
+      defender.armorclass = defender.armorclassOG
+      rerandomize()
     }
     else{
+      //if pen is greater than half pen and add to dmg
+      attacker.armorpen = attacker.armorpen / 4
       attacker.damage = attacker.damage + attacker.armorpen
-      defender.armorclass = defender.armorclass - attacker.armorpen
-      defender.health = defender.health - attacker.damage - defender.armorclass
+      defender.health = defender.health - attacker.damage
+      attacker.armorpen = attacker.armorpenOG
+      log(attacker.register + " hit for " + attacker.damage)
     }
-    log(attacker.register + " hit for " + attacker.damage)
+    console.log(attacker.damage)
     rerandomize()
     $("#PlayerHealth").empty()
     $PlayerHealthText.innerHTML += playerObj.health;
@@ -287,7 +337,7 @@ attack = function(attacker, defender){
 
       }
     }
-    $("#attack").show()
+    $("#turntable").show()
     if(redo == true){
       redo = false
       attack(defender, attacker)
@@ -300,7 +350,7 @@ attack = function(attacker, defender){
       redo = false
       attack(defender, attacker)
     }
-    $("#attack").show()
+    $("#turntable").show()
   }
 }
       
