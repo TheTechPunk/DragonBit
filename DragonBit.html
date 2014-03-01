@@ -57,23 +57,23 @@
   </tr>
   <tr>
     <td>Scout</td>
-    <td>2 AP</td>
-    <td>0 AC</td>
-    <td>&nbsp;</td>
+    <td>4 AP</td>
+    <td>1 AC</td>
+    <td>High AP, Offensive style play, High AP</td>
     <td><input id="Scout" type = "button" value = "Chose Scout"></td>
   </tr>
     <td>Marshall</td>
-    <td>3 AC</td>
-    <td>0 AP</td>
-    <td>&nbsp;</td>
+    <td>4 AC</td>
+    <td>1 AP</td>
+    <td>Lower Damage, Defensive style play, High AC</td>
     <td><input id="Marshall" type = "button" value = "Chose Marshall"></td>
   </tr>
   <tr>
-    <td>QuickStep</td>
-    <td>0 AC</td>
-    <td>0 AP</td>
-    <td>Nimble: Hits twice, with second hit doing half</td>
-    <td><input id="Quickstep" type = "button" value = "Chose QuickStep" /></td>
+    <td>Assassin</td>
+    <td>1 AC</td>
+    <td>1 AP</td>
+    <td>Powerful strikes with a trade of low AC/AP/Health</td>
+    <td><input id="Assassin" type = "button" value = "Chose Assassin" /></td>
   </tr>
 </table>  
 
@@ -100,6 +100,7 @@
 </body>
 
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://cdn.jsdelivr.net/qtip2/2.2.0/jquery.qtip.min.js"></script>
 <script>
 Defensive = function(){
   $("#turntable").hide();
@@ -148,12 +149,13 @@ dragonObj.alignment = "Evil"
 playerObj=new Object;
 playerObj.register = "You"
 playerObj.alignment = "Good"
+power2Sel = document.getElementById("power2")
 
 //setup for buttons, press all da buttons!
 $(document).ready(function(){
   $("#Marshall").on("click", marshallSel);
   $("#turntable").hide();
-  $("#Quickstep").on("click", quickstepSel);
+  $("#Assassin").on("click", assassinSel);
   $("#Scout").on("click", scoutSel);
   $("#attack").on("click", openOffensiveTable);
   $("#reset").on("click", reset);
@@ -175,12 +177,12 @@ log = function (input, colorChoice) {
 log("You are fighting a " + currentNPC.register)
 //if normal everyday dull class selected
 //set player vars to:
-quickstepSel = function(){
+assassinSel = function(){
 playerObj.potioncount = 1
 classOfPlayer = 1
 playerObj.health = 7
 playerObj.hitmiss = (Math.random)();
-playerObj.damage = Math.floor((Math.random)() *2 +2) + Math.floor((Math.random)() *2 +2 /2);
+playerObj.damage = Math.floor((Math.random)() *2 ) + 4;
 $PlayerHealthText = document.getElementById("PlayerHealth");
 $PlayerHealthText.innerHTML += playerObj.health;
 //playerObj.quickstepDamage = Math.floor((Math.random)() *2 +1) + Math.floor((Math.random)() *2 +1 /2)
@@ -203,7 +205,7 @@ playerObj.potioncount = 1
 classOfPlayer = 2
 playerObj.health = 10;
 playerObj.hitmiss = (Math.random)();
-playerObj.damage = Math.floor((Math.random)() *2 +2) - .5;
+playerObj.damage = Math.floor((Math.random)() *2 ) +2;
 $PlayerHealthText = document.getElementById("PlayerHealth");
 $PlayerHealthText.innerHTML += playerObj.health;
 //playerObj.marshallDamage = Math.floor((Math.random)() *2 +1) - .5
@@ -211,6 +213,8 @@ $("#turntable").show()
 $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
 playerObj.ID = 2
+$("#power2").val("Steady Jab")
+power2Sel = document.getElementById("power2").title = "A steady jab that never misses and ignores armor"
 }
 
 //if scout selected
@@ -222,7 +226,7 @@ playerObj.armorpen = 4
 classOfPlayer = 3
 playerObj.health = 10;
 playerObj.hitmiss = (Math.random)();
-playerObj.damage = Math.floor((Math.random)() *2 +2) ;
+playerObj.damage = Math.floor((Math.random)() *2 )+2 ;
 $PlayerHealthText = document.getElementById("PlayerHealth");
 $PlayerHealthText.innerHTML += playerObj.health;
 //playerObj.scoutDamage = Math.floor((Math.random)() *2 +1)
@@ -231,7 +235,7 @@ $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
 playerObj.ID = 3
 }
-
+$("#power2").qtip()
 specialAttack = function(){
 if(playerObj.ID == 1){
   log("Sorry about the mess, this isnt ready for this class yet.")
@@ -241,8 +245,15 @@ else if(playerObj.ID == 2){
   log("You get ready to quickly jab")
   currentNPC.health = currentNPC.health - currentNPC.damage / 2
   redo = false
+  $("#NPCHealth").empty()
+  $NPCHealthText.innerHTML += currentNPC.health;
   attack(currentNPC, playerObj)
   log("You take the chance to jab!")
+  if(currentNPC.health <= 0){
+  alert("You deafeated the " + defender.register + "!")
+  alert("The game will now reset")
+  reset()
+}
 }
 else if(playerObj.ID == 3){
   log("Sorry about the mess, this isnt ready for this class yet.")
@@ -272,11 +283,11 @@ PotionUse = function (){
 
 rerandomize = function(){
   dragonObj.hitmiss = (Math.random)();
-  dragonObj.damage = Math.floor((Math.random)() *2 + 1);
+  dragonObj.damage = Math.floor((Math.random)() *2 ) +2;
   playerObj.hitmiss = (Math.random)()
-  playerObj.damage = Math.floor((Math.random)() *2 +2) 
+  playerObj.damage = Math.floor((Math.random)() *2 ) +2 
   ninjaObj.hitmiss = (Math.random)();
-  ninjaObj.damage = Math.floor((Math.random)()*2 +1);
+  ninjaObj.damage = Math.floor((Math.random)()*2 ) +2;
 }
 
 attacksetup = function(customsel1, customsel2){
@@ -301,6 +312,7 @@ attack = function(attacker, defender){
         else{
           log("The " + currentNPC.register + "'s attack was negated!")
         }
+        defender.health = defender.health - .5
       }
       else{
         defender.health = defender.health - attacker.damage
