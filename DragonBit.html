@@ -140,7 +140,8 @@ if(currentNPCRandomizer == 1){
 else{
   currentNPC = dragonObj
 }
-
+$PlayerHealthText = document.getElementById("PlayerHealth")
+$NPCHealthText = document.getElementById("NPCHealth")
 $NPCHealthText = document.getElementById("NPCHealth");
 $NPCHealthText.innerHTML += currentNPC.health;
 dragonObj.hitmiss = (Math.random)()
@@ -183,15 +184,16 @@ classOfPlayer = 1
 playerObj.health = 7
 playerObj.hitmiss = (Math.random)();
 playerObj.damage = Math.floor((Math.random)() *2 ) + 4;
-$PlayerHealthText = document.getElementById("PlayerHealth");
-$PlayerHealthText.innerHTML += playerObj.health;
+updateHealth()
 //playerObj.quickstepDamage = Math.floor((Math.random)() *2 +1) + Math.floor((Math.random)() *2 +1 /2)
 playerObj.armorclass = 1
 playerObj.armorpen = 1
 $("#turntable").show()
 $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
-playerObj.ID = 1
+$("#power2").val("Combo Attack")
+power2Sel = document.getElementById("power2").title = "A combo attack that does 4 damage, ignores AC, and is a 100% hit. It requires 4 charge, which is gained from landing hits."
+playerObj.sinCharge = 0
 }
 
 //if marshall selected
@@ -206,8 +208,7 @@ classOfPlayer = 2
 playerObj.health = 10;
 playerObj.hitmiss = (Math.random)();
 playerObj.damage = Math.floor((Math.random)() *2 ) +2;
-$PlayerHealthText = document.getElementById("PlayerHealth");
-$PlayerHealthText.innerHTML += playerObj.health;
+updateHealth()
 //playerObj.marshallDamage = Math.floor((Math.random)() *2 +1) - .5
 $("#turntable").show()
 $("#classtable").hide()
@@ -227,8 +228,7 @@ classOfPlayer = 3
 playerObj.health = 10;
 playerObj.hitmiss = (Math.random)();
 playerObj.damage = Math.floor((Math.random)() *2 )+2 ;
-$PlayerHealthText = document.getElementById("PlayerHealth");
-$PlayerHealthText.innerHTML += playerObj.health;
+updateHealth()
 //playerObj.scoutDamage = Math.floor((Math.random)() *2 +1)
 $("#turntable").show()
 $("#classtable").hide()
@@ -237,10 +237,20 @@ playerObj.ID = 3
 }
 $("#power2").qtip()
 specialAttack = function(){
-if(playerObj.ID == 1){
-  log("Sorry about the mess, this isnt ready for this class yet.")
+if(classOfPlayer == 1){
+  if(playerObj.sinCharge >= 4){
+    $("#powertable").hide()
+    log("You unleash a wicked sick combo attack! Disabling your oponent temporarily")
+    currentNPC.health = currentNPC.health - 4
+
+    playerObj.sinCharge = 0
+    $("#turntable").show()
+  }
+  else{
+    log("You dont have enough charge to do that. Gain charge by landing a hit.")
+  }
 }
-else if(playerObj.ID == 2){
+else if(classOfPlayer == 2){
   $("#powertable").hide()
   log("You get ready to quickly jab")
   currentNPC.health = currentNPC.health - currentNPC.damage / 2
@@ -256,8 +266,8 @@ else if(playerObj.ID == 2){
 }
 }
 else if(playerObj.ID == 3){
-  log("Sorry about the mess, this isnt ready for this class yet.")
-}
+  log("Sorry about the mess, this isnt ready yet")
+  }
 }
 PotionUse = function (){
   if(playerObj.potioncount >= 1){
@@ -299,10 +309,14 @@ attacksetup = function(customsel1, customsel2){
 //attack funtion, main game logic storage
 attack = function(attacker, defender){
   if(attacker.hitmiss >= .25){
+    if(classOfPlayer == 1){
+      playerObj.sinCharge = playerObj.sinCharge + 1
+      log("You gain charge, you have " + playerObj.sinCharge)
+    }
     //$("#powertable").hide()
     console.log(attacker.damage)
     if(attacker.armorpen < defender.armorclass){
-      //if armor is tougher than pen: half armor and subtract from dmg
+      //if armor is tougher than pen: divide armor by 4 and subtract from dmg
       defender.armorclass = defender.armorclass / 4
       attacker.damage =  attacker.damage - defender.armorclass
       if(attacker.damage <= 0){
@@ -321,9 +335,10 @@ attack = function(attacker, defender){
       attacker.armorpen = attacker.armorpenOG
       defender.armorclass = defender.armorclassOG
       rerandomize()
+      updateHealth()
     }
     else{
-      //if pen is greater than half pen and add to dmg
+      //if pen is greater than divide pen by 4 and add to dmg
       attacker.armorpen = attacker.armorpen / 4
       attacker.damage = attacker.damage + attacker.armorpen
       defender.health = defender.health - attacker.damage
@@ -332,10 +347,7 @@ attack = function(attacker, defender){
     }
     console.log(attacker.damage)
     rerandomize()
-    $("#PlayerHealth").empty()
-    $PlayerHealthText.innerHTML += playerObj.health;
-    $("#NPCHealth").empty()
-    $NPCHealthText.innerHTML += currentNPC.health;
+    updateHealth()
     if(defender.health <= 0){
       if(defender.alignment == "Evil"){
         alert("You deafeated the " + defender.register + "!")
@@ -375,6 +387,12 @@ debug = function(){
   $("powertable").show()
   $("#turntable").show()
   $("classtable").show()
+}
+updateHealth = function(){
+    $("#PlayerHealth").empty()
+    $PlayerHealthText.innerHTML += playerObj.health;
+    $("#NPCHealth").empty()
+    $NPCHealthText.innerHTML += currentNPC.health;
 }
 </script>
 
