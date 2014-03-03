@@ -4,6 +4,7 @@
 <head>
 <meta charset=utf-8 />
 <title>Dragon Bit Version 1.7</title>
+
 <style>
   /*table, tr, td, div {border:1px solid red; }*/
 
@@ -151,7 +152,8 @@ playerObj=new Object;
 playerObj.register = "You"
 playerObj.alignment = "Good"
 power2Sel = document.getElementById("power2")
-
+playerCritChance = Math.floor((Math.random))
+playerCrit = false
 //setup for buttons, press all da buttons!
 $(document).ready(function(){
   $("#Marshall").on("click", marshallSel);
@@ -181,13 +183,21 @@ log("You are fighting a " + currentNPC.register)
 assassinSel = function(){
 playerObj.potioncount = 1
 classOfPlayer = 1
-playerObj.health = 7
+playerObj.health = 10
 playerObj.hitmiss = (Math.random)();
-playerObj.damage = Math.floor((Math.random)() *2 ) + 4;
+if(playerCritChance <= .15){
+playerObj.damage = 5
+playerCrit = true
+}
+else{
+  playerObj.damage = playerObj.damage = Math.floor((Math.random)() *2 ) +2
+}
 updateHealth()
 //playerObj.quickstepDamage = Math.floor((Math.random)() *2 +1) + Math.floor((Math.random)() *2 +1 /2)
 playerObj.armorclass = 1
 playerObj.armorpen = 1
+playerObj.armorpenOG = 1
+playerObj.armorclassOG = 1
 $("#turntable").show()
 $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
@@ -240,11 +250,11 @@ specialAttack = function(){
 if(classOfPlayer == 1){
   if(playerObj.sinCharge >= 4){
     $("#powertable").hide()
-    log("You unleash a wicked sick combo attack! Disabling your oponent temporarily")
-    currentNPC.health = currentNPC.health - 4
-
+    log("You unleash a wicked sick combo attack! Disabling your oponent temporarily and doing 6 damage!")
+    currentNPC.health = currentNPC.health - 6
     playerObj.sinCharge = 0
     $("#turntable").show()
+    updateHealth()
   }
   else{
     log("You dont have enough charge to do that. Gain charge by landing a hit.")
@@ -295,7 +305,19 @@ rerandomize = function(){
   dragonObj.hitmiss = (Math.random)();
   dragonObj.damage = Math.floor((Math.random)() *2 ) +2;
   playerObj.hitmiss = (Math.random)()
+  if(classOfPlayer == 1){
+    playerCritChance = Math.floor((Math.random))
+    if(playerCritChance <= .15){
+      crit = true
+      playerObj.damage = 5
+    }
+    else{
+      playerObj.damage = Math.floor((Math.random)() *2 ) +2 
+    }
+}
+else{
   playerObj.damage = Math.floor((Math.random)() *2 ) +2 
+}
   ninjaObj.hitmiss = (Math.random)();
   ninjaObj.damage = Math.floor((Math.random)()*2 ) +2;
 }
@@ -309,7 +331,7 @@ attacksetup = function(customsel1, customsel2){
 //attack funtion, main game logic storage
 attack = function(attacker, defender){
   if(attacker.hitmiss >= .25){
-    if(classOfPlayer == 1){
+    if(classOfPlayer == 1 && redo == false){
       playerObj.sinCharge = playerObj.sinCharge + 1
       log("You gain charge, you have " + playerObj.sinCharge)
     }
@@ -318,7 +340,9 @@ attack = function(attacker, defender){
     if(attacker.armorpen < defender.armorclass){
       //if armor is tougher than pen: divide armor by 4 and subtract from dmg
       defender.armorclass = defender.armorclass / 4
+      console.log("Armor class after devided by 4:" + defender.armorclass)
       attacker.damage =  attacker.damage - defender.armorclass
+      console.log("Damage after armor over pen: " + attacker.damage)
       if(attacker.damage <= 0){
         if(attacker.alignment == "Good"){
           log("Your attack was negated!")
@@ -338,12 +362,16 @@ attack = function(attacker, defender){
       updateHealth()
     }
     else{
-      //if pen is greater than divide pen by 4 and add to dmg
+      //if pen is greater than amor(or equal to) than divide pen by 4 and add to dmg
       attacker.armorpen = attacker.armorpen / 4
+      console.log("Armor pen devided by 4: " + attacker.armorpen)
       attacker.damage = attacker.damage + attacker.armorpen
       defender.health = defender.health - attacker.damage
       attacker.armorpen = attacker.armorpenOG
       log(attacker.register + " hit for " + attacker.damage)
+    }
+    if(playerCrit == true){
+      log("CRITICAL HIT!")
     }
     console.log(attacker.damage)
     rerandomize()
