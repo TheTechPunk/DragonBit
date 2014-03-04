@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset=utf-8 />
-<title>Dragon Bit Version 1.7</title>
+<title>Dragon Bit Version 1.8</title>
 
 <style>
   /*table, tr, td, div {border:1px solid red; }*/
@@ -60,20 +60,20 @@
     <td>Scout</td>
     <td>4 AP</td>
     <td>1 AC</td>
-    <td>High AP, Offensive style play, High AP</td>
+    <td>High AP, Offensive style play, Low AC</td>
     <td><input id="Scout" type = "button" value = "Chose Scout"></td>
   </tr>
     <td>Marshall</td>
     <td>4 AC</td>
     <td>1 AP</td>
-    <td>Lower Damage, Defensive style play, High AC</td>
+    <td>Low AP, Defensive style play, High AC</td>
     <td><input id="Marshall" type = "button" value = "Chose Marshall"></td>
   </tr>
   <tr>
     <td>Assassin</td>
     <td>1 AC</td>
     <td>1 AP</td>
-    <td>Powerful strikes with a trade of low AC/AP/Health</td>
+    <td>Low AP, High burst damage and chance to critical hit, Low AC</td>
     <td><input id="Assassin" type = "button" value = "Chose Assassin" /></td>
   </tr>
 </table>  
@@ -112,7 +112,8 @@ Defensive = function(){
 //creation of player and NPC objects
 dragonObj=new Object;
 currentNPC ="ERROR"
-currentNPCRandomizer = Math.floor((Math.random)()*2 +2)
+currentNPCRandomizer = Math.floor((Math.random)()*2 +1)
+console.log("Current NPCRandom " + currentNPCRandomizer)
 
 ninjaObj = {
   armorclass: 1,
@@ -152,8 +153,10 @@ playerObj=new Object;
 playerObj.register = "You"
 playerObj.alignment = "Good"
 power2Sel = document.getElementById("power2")
-playerCritChance = Math.floor((Math.random))
+playerCritChance = (Math.random)() 
+console.log("Crit = " + playerCritChance)
 playerCrit = false
+playerObj.notDead = false
 //setup for buttons, press all da buttons!
 $(document).ready(function(){
   $("#Marshall").on("click", marshallSel);
@@ -185,8 +188,9 @@ playerObj.potioncount = 1
 classOfPlayer = 1
 playerObj.health = 10
 playerObj.hitmiss = (Math.random)();
-if(playerCritChance <= .15){
-playerObj.damage = 5
+if(playerCritChance >= .25){
+playerObj.damage = playerObj.damage = Math.floor((Math.random)() *3 ) +2
+playerObj.damage = playerObj.damage * 2
 playerCrit = true
 }
 else{
@@ -233,12 +237,16 @@ power2Sel = document.getElementById("power2").title = "A steady jab that never m
 scoutSel = function(){
 playerObj.potioncount = 1
 playerObj.armorclass = 1
+playerObj.armorclassOG = 1
 playerObj.armorpen = 4
+playerObj.armorpenOG = 4
 classOfPlayer = 3
 playerObj.health = 10;
 playerObj.hitmiss = (Math.random)();
 playerObj.damage = Math.floor((Math.random)() *2 )+2 ;
 updateHealth()
+power2Sel = document.getElementById("power2").title = "Sharpening blades to increase AP"
+$("#power2").val("Sharpen Blades")
 //playerObj.scoutDamage = Math.floor((Math.random)() *2 +1)
 $("#turntable").show()
 $("#classtable").hide()
@@ -255,6 +263,11 @@ if(classOfPlayer == 1){
     playerObj.sinCharge = 0
     $("#turntable").show()
     updateHealth()
+    if(currentNPC.health <= 0){
+      alert("You deafeated the " + currentNPC.register + "!")
+      alert("The game will now reset")
+      reset()
+    }
   }
   else{
     log("You dont have enough charge to do that. Gain charge by landing a hit.")
@@ -270,13 +283,17 @@ else if(classOfPlayer == 2){
   attack(currentNPC, playerObj)
   log("You take the chance to jab!")
   if(currentNPC.health <= 0){
-  alert("You deafeated the " + defender.register + "!")
+  alert("You deafeated the " + currentNPC.register + "!")
   alert("The game will now reset")
   reset()
 }
 }
 else if(playerObj.ID == 3){
-  log("Sorry about the mess, this isnt ready yet")
+  playerObj.armorpen = playerObj.armorpen + 1
+  playerObj.armorpenOG = playerObj.armorpenOG + 1
+  log("You sharpen your blades increasing your AP")
+  redo = false
+  attack(currentNPC, playerObj)
   }
 }
 PotionUse = function (){
@@ -302,14 +319,17 @@ PotionUse = function (){
 
 
 rerandomize = function(){
+  playerCritChance = (Math.random)()
+  console.log("Crit rerandom = " + playerCritChance)
   dragonObj.hitmiss = (Math.random)();
   dragonObj.damage = Math.floor((Math.random)() *2 ) +2;
   playerObj.hitmiss = (Math.random)()
   if(classOfPlayer == 1){
     playerCritChance = Math.floor((Math.random))
-    if(playerCritChance <= .15){
+    if(playerCritChance >= .25){
       crit = true
-      playerObj.damage = 5
+      playerObj.damage = playerObj.damage = Math.floor((Math.random)() *2 ) +2
+      playerObj.damage = playerObj.damage * 3
     }
     else{
       playerObj.damage = Math.floor((Math.random)() *2 ) +2 
@@ -336,7 +356,7 @@ attack = function(attacker, defender){
       log("You gain charge, you have " + playerObj.sinCharge)
     }
     //$("#powertable").hide()
-    console.log(attacker.damage)
+    //console.log(attacker.damage)
     if(attacker.armorpen < defender.armorclass){
       //if armor is tougher than pen: divide armor by 4 and subtract from dmg
       defender.armorclass = defender.armorclass / 4
@@ -370,19 +390,21 @@ attack = function(attacker, defender){
       attacker.armorpen = attacker.armorpenOG
       log(attacker.register + " hit for " + attacker.damage)
     }
-    if(playerCrit == true){
+    if(playerCrit == true && attacker.register == "You"){
       log("CRITICAL HIT!")
+      playerCrit = false
     }
     console.log(attacker.damage)
     rerandomize()
     updateHealth()
     if(defender.health <= 0){
-      if(defender.alignment == "Evil"){
+      if(defender.alignment == "Evil" && playerObj.notDead == true){
         alert("You deafeated the " + defender.register + "!")
         alert("The game will now reset")
         reset()
       }
       else{
+        playerObj.notDead = false
         alert("You were slain!")
         alert("The game will now reset")
         reset()
@@ -407,6 +429,7 @@ attack = function(attacker, defender){
 }
       
 reset = function(){
+  currentNPCRandomizer = Math.floor((Math.random)()*2 +2)
   location.reload()
 };
 debug = function(){
