@@ -34,6 +34,29 @@
   #powertable, #defensivetable {display: none;}
 </style>
 <body>
+<div align="center" id="menu">
+<img src="Banner.png">
+<br>
+<input type="button" id="start" value="Quick Match">
+<br>
+<input type="button" id="creditsbutton" value="Show Credits">
+<br>
+</div>
+
+
+<div align="center" id="credits">
+<h3>Nathan Stevens/ TheTechPunk</h3>
+<br>
+<big>Jonathan Stevens</big>
+<br>
+William Wolfe
+<br>
+Joey Lopez
+<br>
+Caleb Stevens
+<br>
+<input type="button" id="creditback" value="Return to menu">
+</div>
 
 <table id='powertable' cellpadding='0' cellpadding='0'>
   <tr>
@@ -103,6 +126,30 @@
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="http://cdn.jsdelivr.net/qtip2/2.2.0/jquery.qtip.min.js"></script>
 <script>
+$("#credits").hide()
+$("#creditback").hide()
+creditsOpened = function(){
+  $("#menu").hide()
+  $("#credits").show()
+  $("#creditback").on("click", backtomenu)
+  $("#creditback").show()
+}
+backtomenu = function(){
+  $("#credits").hide()
+  $("#creditback").hide()
+  $("#menu").show()
+}
+
+$("#classtable").hide()
+$("#log").hide()
+menuPressed = function(){
+  $("#classtable").show()
+  $("#log").show()
+  $("#menu").hide()
+}
+
+
+
 Defensive = function(){
   $("#turntable").hide();
   $("#defensivetable").show();
@@ -171,6 +218,8 @@ $(document).ready(function(){
   $("#turntable").hide()
   $("#power2").on("click", specialAttack)
   $("#power1").on("click", attacksetup)
+  $("#start").on("click", menuPressed)
+  $("#creditsbutton").on("click", creditsOpened)
  });
 openOffensiveTable = function(){
   $("#powertable").show()
