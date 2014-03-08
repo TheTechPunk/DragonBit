@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset=utf-8 />
-<title>Dragon Bit Version 1.8</title>
+<title>Dragon Bit Version 1.9 TEST</title>
 
 <style>
   /*table, tr, td, div {border:1px solid red; }*/
@@ -31,8 +30,12 @@
     background-color: #ffffff;
   }
 
+
   #powertable, #defensivetable {display: none;}
-</style>
+  #resetdiv{
+    text-align: right;
+  }
+  </style>
 <body>
 <div align="center" id="menu">
 <img src="Banner.png">
@@ -47,7 +50,7 @@
 <div align="center" id="credits">
 <h3>Nathan Stevens/ TheTechPunk</h3>
 <br>
-<big>Jonathan Stevens</big>
+<big><b>Jonathan Stevens</b></big>
 <br>
 William Wolfe
 <br>
@@ -55,12 +58,18 @@ Joey Lopez
 <br>
 Caleb Stevens
 <br>
+Epic Faces
+<br>
+Justin Rolston
+<br>
+Jeffrey Lott
+<br>
 <input type="button" id="creditback" value="Return to menu">
 </div>
 
 <table id='powertable' cellpadding='0' cellpadding='0'>
   <tr>
-    <th><button id='power1'>Hit</button></th>
+    <th><button id='power1'>Strike</button></th>
     <th><input id='power2' type="button" value="ERROR" style="display: inline"></input></th>
   </tr>
 </table>
@@ -125,12 +134,9 @@ Caleb Stevens
   </tr>
 </table>
 
-
-<div align="right">
+<div id="resetdiv">
   <input id ="reset" type = "button" value = " Reset ">
 </div>
-
-
 <div id='log' cols='20' rows='10'  ></div>
 
 </body>
@@ -477,7 +483,6 @@ attack = function(attacker, defender){
     if(defender.health <= 0){
       if(defender.alignment == "Evil" && enemiesdefeated == 0){
         enemiesdefeated = enemiesdefeated + 1
-        alert("You deafeated the " + defender.register + "!")
         alert("You are now level 2! And have defeated the " + currentNPC.register)
         playerObj.level = 2
         playerObj.health = playerObj.health + 3
@@ -487,29 +492,30 @@ attack = function(attacker, defender){
         playerObj.armorpenOG = playerObj.armorpenOG + 1
         log("You have gained +1 to AC and AP")
         log("You have gained 3 health and 1 potion")
-        playerObj.potioncount = playerObj.potioncount + 
+        playerObj.potioncount = playerObj.potioncount + 1
         $('#playerlevel').empty()
         $playerlevelselector.innerHTML += "Your level: " + playerObj.level
-        if(currentNPC.opositeclass == "Ninja"){
+        $("#enemylevel").empty()
+        if(currentNPC.opositeclass == 2){
           currentNPC = ninjaObj
           log("You are fighting a Ninja")
         }
-        else{
+        else if(currentNPC.opositeclass == 1){
           currentNPC = dragonObj
           log("You are fighting a Dragon")
         }
         updateHealth()
+        $enemylevelselector.innerHTML += "Enemy level: " + currentNPC.level
       }
       else if(defender.register == "You"){
         playerObj.notDead = false
         alert("You were slain!")
-        alert("The game will now reset")
-        reset()
+        lockdown()
 
       }
       else if(enemiesdefeated >= 1){
         alert("You have won!")
-        $("#turntable").hide()
+        lockdown()
       }
     }
     $("#turntable").show()
@@ -545,6 +551,13 @@ updateHealth = function(){
     $PlayerHealthText.innerHTML += playerObj.health;
     $("#NPCHealth").empty()
     $NPCHealthText.innerHTML += currentNPC.health;
+}
+lockdown = function(){
+  $("#powertable").remove()
+  $("#turntable").remove()
+  $("#defensivetable").remove()
+  $("#resetdiv").css("text-align", "center")
+  //document.getElementById("resetdiv").align = "center"
 }
 </script>
 
