@@ -103,21 +103,33 @@ Caleb Stevens
 
 <table id="turntable" cellpadding="0" cellpadding="0">
   <tr>
-    <td>Player HP</td>
-    <td>&nbsp;</td>
-    <td>Enemy HP </td>
-  </tr>
-  <tr>
-    <td><input id ="reset" type = "button" value = " Reset "></td>
-    <td><input id='attack' type='button' value='Offensive' ></td>
-    <td><input id="defense" type="button" value="Defensive"></td>
-  </tr>
-  <tr>
+    <td>Your HP is</td>
     <td id='PlayerHealth'></td>
     <td>&nbsp;</td>
+    <td>Enemy HP is</td>
     <td id='NPCHealth'></td>
   </tr>
+  <tr>
+    <td><input id='attack' type='button' value='Offensive'></td>
+    <td id="playerlevel">Your Level: </td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td id="enemylevel">Enemy level: </td>
+  </tr>
+  <tr>
+    <td><input id="defense" type="button" value="Defensive"></td>
+    <td></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
 </table>
+
+
+<div align="right">
+  <input id ="reset" type = "button" value = " Reset ">
+</div>
+
 
 <div id='log' cols='20' rows='10'  ></div>
 
@@ -126,6 +138,7 @@ Caleb Stevens
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="http://cdn.jsdelivr.net/qtip2/2.2.0/jquery.qtip.min.js"></script>
 <script>
+enemiesdefeated = 0
 $("#credits").hide()
 $("#creditback").hide()
 creditsOpened = function(){
@@ -172,9 +185,11 @@ ninjaObj = {
   register: "Ninja",
   armorpen: 2,
   armorpenOG: 2,
-  alignment: "Evil"
+  alignment: "Evil",
+  level: 1,
+  opositeclass: 1
 };
-
+dragonObj.level = 2
 dragonObj.register = "Dragon"
 dragonObj.armorpen = 2
 dragonObj.armorpenOG = 2
@@ -182,6 +197,7 @@ dragonObj.health = 15;
 dragonObj.go = true
 dragonObj.armorclass = 2
 dragonObj.armorclassOG = 2
+dragonObj.opositeclass = 2
 
 if(currentNPCRandomizer == 1){
   currentNPC = ninjaObj
@@ -220,6 +236,11 @@ $(document).ready(function(){
   $("#power1").on("click", attacksetup)
   $("#start").on("click", menuPressed)
   $("#creditsbutton").on("click", creditsOpened)
+  playerObj.level = 1
+  $playerlevelselector = document.getElementById("playerlevel")
+  $playerlevelselector.innerHTML += playerObj.level
+  $enemylevelselector = document.getElementById("enemylevel")
+  $enemylevelselector.innerHTML += currentNPC.level
  });
 openOffensiveTable = function(){
   $("#powertable").show()
@@ -304,6 +325,10 @@ playerObj.ID = 3
 }
 $("#power2").qtip()
 specialAttack = function(){
+if(playerObj.level == 1){
+  log("You are not high enough level to use this")
+}
+else{
 if(classOfPlayer == 1){
   if(playerObj.sinCharge >= 4){
     $("#powertable").hide()
@@ -343,7 +368,9 @@ else if(playerObj.ID == 3){
   log("You sharpen your blades increasing your AP")
   redo = false
   attack(currentNPC, playerObj)
+  $("#powertable").hide()
   }
+}
 }
 PotionUse = function (){
   if(playerObj.potioncount >= 1){
@@ -361,6 +388,7 @@ PotionUse = function (){
     }
   else if(playerObj.potioncount <= 0){
     log("You have no potions to use")
+    $("#defensivetable").hide()
     $("#turntable").show()
   }
 }
@@ -447,17 +475,41 @@ attack = function(attacker, defender){
     rerandomize()
     updateHealth()
     if(defender.health <= 0){
-      if(defender.alignment == "Evil" && playerObj.notDead == true){
+      if(defender.alignment == "Evil" && enemiesdefeated == 0){
+        enemiesdefeated = enemiesdefeated + 1
         alert("You deafeated the " + defender.register + "!")
-        alert("The game will now reset")
-        reset()
+        alert("You are now level 2! And have defeated the " + currentNPC.register)
+        playerObj.level = 2
+        playerObj.health = playerObj.health + 3
+        playerObj.armorclass = playerObj.armorclass + 1
+        playerObj.armorclassOG = playerObj.armorclassOG + 1
+        playerObj.armorpen = playerObj.armorpen + 1
+        playerObj.armorpenOG = playerObj.armorpenOG + 1
+        log("You have gained +1 to AC and AP")
+        log("You have gained 3 health and 1 potion")
+        playerObj.potioncount = playerObj.potioncount + 
+        $('#playerlevel').empty()
+        $playerlevelselector.innerHTML += "Your level: " + playerObj.level
+        if(currentNPC.opositeclass == "Ninja"){
+          currentNPC = ninjaObj
+          log("You are fighting a Ninja")
+        }
+        else{
+          currentNPC = dragonObj
+          log("You are fighting a Dragon")
+        }
+        updateHealth()
       }
-      else{
+      else if(defender.register == "You"){
         playerObj.notDead = false
         alert("You were slain!")
         alert("The game will now reset")
         reset()
 
+      }
+      else if(enemiesdefeated >= 1){
+        alert("You have won!")
+        $("#turntable").hide()
       }
     }
     $("#turntable").show()
