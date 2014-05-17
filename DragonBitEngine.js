@@ -1,4 +1,4 @@
-enemiesdefeated = 0
+
 $("#credits").hide()
 $("#creditback").hide()
 creditsOpened = function(){
@@ -30,11 +30,27 @@ Defensive = function(){
 
 }
 //creation of player and NPC objects
+questing = false
 dragonObj=new Object;
 currentNPC ="ERROR"
 currentNPCRandomizer = Math.floor((Math.random)()*2 +1)
 console.log("Current NPCRandom " + currentNPCRandomizer)
 
+
+mageObj = {
+  armorclass: 1,
+  armorclassOG: 1,  
+  health: 15,
+  go: true,
+  hitmiss: (Math.random)(),
+  damage: Math.floor((Math.random)()*2) + 2,
+  register: "Rouge Mage",
+  armorpen: 1,
+  armorpenOG: 1,
+  alignment: "Evil",
+  level: 2,
+  questorder: 1
+}
 ninjaObj = {
   armorclass: 1,
   armorclassOG: 1,  
@@ -48,7 +64,14 @@ ninjaObj = {
   alignment: "Evil",
   level: 1,
   opositeclass: 1
-};
+}
+  ninjaObj.dead = function(){
+  levelup()
+  currentNPC = dragonObj
+  log("You are now fighting a dragon")
+  updateHealth()
+}
+
 dragonObj.level = 2
 dragonObj.register = "Dragon"
 dragonObj.armorpen = 2
@@ -58,6 +81,12 @@ dragonObj.go = true
 dragonObj.armorclass = 2
 dragonObj.armorclassOG = 2
 dragonObj.opositeclass = 2
+dragonObj.dead = function(){
+levelup()
+currentNPC = ninjaObj
+log("You are now fighting a ninja")
+updateHealth()
+}
 
 if(currentNPCRandomizer == 1){
   currentNPC = ninjaObj
@@ -82,6 +111,7 @@ playerCrit = false
 playerObj.notDead = false
 //setup for buttons, press all da buttons!
 $(document).ready(function(){
+  $("#quest_menu").hide()
   $("#Marshall").on("click", marshallSel);
   $("#turntable").hide();
   $("#Assassin").on("click", assassinSel);
@@ -96,12 +126,20 @@ $(document).ready(function(){
   $("#power1").on("click", attacksetup)
   $("#start").on("click", menuPressed)
   $("#creditsbutton").on("click", creditsOpened)
+  $("#questbutton").on("click", questmenuopen)
+  $("#quest1button").on("click", quest.first)
   playerObj.level = 1
   $playerlevelselector = document.getElementById("playerlevel")
   $playerlevelselector.innerHTML += playerObj.level
   $enemylevelselector = document.getElementById("enemylevel")
   $enemylevelselector.innerHTML += currentNPC.level
  });
+
+questmenuopen = function(){
+  $("#menu").hide()
+  $("#quest_menu").show()
+}
+
 openOffensiveTable = function(){
   $("#powertable").show()
   $("#turntable").hide()
@@ -111,6 +149,7 @@ log = function (input, colorChoice) {
    $('#log').prepend("<p style='color:" + colorChoice + "'>" + input + "</p>");
 }; 
 log("You are fighting a " + currentNPC.register)
+healthOG = 10
 //if normal everyday dull class selected
 //set player vars to:
 assassinSel = function(){
@@ -184,7 +223,7 @@ $("#classtable").hide()
 $("#potionUse").on("click", Defensive)
 playerObj.ID = 3
 }
-$("#power2").qtip()
+//$("#power2").qtip()
 specialAttack = function(){
 if(playerObj.level == 1){
   log("You are not high enough level to use this")
@@ -336,29 +375,16 @@ attack = function(attacker, defender){
     rerandomize()
     updateHealth()
     if(defender.health <= 0){
-      if(defender.alignment == "Evil" && enemiesdefeated == 0){
-        enemiesdefeated = enemiesdefeated + 1
-        alert("You are now level 2! And have defeated the " + currentNPC.register)
-        playerObj.level = 2
-        playerObj.health = playerObj.health + 3
-        playerObj.armorclass = playerObj.armorclass + 1
-        playerObj.armorclassOG = playerObj.armorclassOG + 1
-        playerObj.armorpen = playerObj.armorpen + 1
-        playerObj.armorpenOG = playerObj.armorpenOG + 1
-        log("You have gained +1 to AC and AP")
-        log("You have gained 3 health and 1 potion")
-        playerObj.potioncount = playerObj.potioncount + 1
-        $('#playerlevel').empty()
-        $playerlevelselector.innerHTML += "Your level: " + playerObj.level
-        $("#enemylevel").empty()
-        if(currentNPC.opositeclass == 2){
-          currentNPC = ninjaObj
-          log("You are fighting a Ninja")
-        }
-        else if(currentNPC.opositeclass == 1){
-          currentNPC = dragonObj
-          log("You are fighting a Dragon")
-        }
+      if(defender.alignment == "Evil" && questing == false){
+        defender.dead()
+        // if(currentNPC.opositeclass == 2){
+        //   currentNPC = ninjaObj
+        //   log("You are fighting a Ninja")
+        // }
+        // else if(currentNPC.opositeclass == 1){
+        //   currentNPC = dragonObj
+        //   log("You are fighting a Dragon")
+        // }
         updateHealth()
         $enemylevelselector.innerHTML += "Enemy level: " + currentNPC.level
       }
@@ -368,7 +394,13 @@ attack = function(attacker, defender){
         lockdown()
 
       }
-      else if(enemiesdefeated >= 1){
+      else if(questing == true){
+        log("You have defeated your mark, continue on!")
+        nextfunction(currentNPC.questorder)
+      }
+
+
+      else if(playerObj.level >= 1){
         alert("You have won!")
         lockdown()
       }
@@ -413,4 +445,59 @@ lockdown = function(){
   $("#defensivetable").remove()
   $("#resetdiv").css("text-align", "center")
   //document.getElementById("resetdiv").align = "center"
+}
+
+levelup = function(){
+        alert("You are now level " + playerObj.level + "! And have defeated the " + currentNPC.register)
+        playerObj.level = playerObj.level + 1
+        playerObj.health = playerObj.health + 3
+        playerObj.armorclass = playerObj.armorclass + 1
+        playerObj.armorclassOG = playerObj.armorclassOG + 1
+        playerObj.armorpen = playerObj.armorpen + 1
+        playerObj.armorpenOG = playerObj.armorpenOG + 1
+        log("You have gained +1 to AC and AP")
+        log("You have gained 3 health and 1 potion")
+        playerObj.potioncount = playerObj.potioncount + 1
+        $('#playerlevel').empty()
+        $playerlevelselector.innerHTML += "Your level: " + playerObj.level
+        $("#enemylevel").empty()
+}
+quest =new Object
+quest.first = function() {
+  $("#log").show()
+  $("#quest_menu").hide()
+  currentquest = "first"
+  currentNPC = mageObj
+  questing = true
+  alert("Welcome Hero! The Templars reuire your assitance, a run away Mage has escaped to Thieves Den, kill him and bring me back his head! and gold will follow!")
+  $("#classtable").show()
+}
+
+
+dialouge = function(thequest){
+$("#turntable").hide()
+if(thequest == "first")
+log("Excellent work! Now come, drink! For our gold is your gold!")
+questlevelup(2)
+}
+
+
+nextfunction = function(position){
+  dialouge(currentquest)
+}
+
+questlevelup = function(timesdone){
+alert("You are now level " + timesdone + "! and have completed this quest!")
+        playerObj.level = playerObj.level + 1
+        playerObj.health = healthOG + 3 * timesdone
+        playerObj.armorclass = playerObj.armorclass + 1
+        playerObj.armorclassOG = playerObj.armorclassOG + 1
+        playerObj.armorpen = playerObj.armorpen + 1
+        playerObj.armorpenOG = playerObj.armorpenOG + 1
+        log("You have gained +1 to AC and AP")
+        log("You have gained 3 health and 1 potion")
+        playerObj.potioncount = playerObj.potioncount + 1
+        $('#playerlevel').empty()
+        $playerlevelselector.innerHTML += "Your level: " + playerObj.level
+        $("#enemylevel").empty()
 }

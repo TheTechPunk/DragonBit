@@ -3,39 +3,10 @@
 <head>
 <meta charset=utf-8 />
 <title>Dragon Bit Version 1.9</title>
-
 <style>
-  /*table, tr, td, div {border:1px solid red; }*/
+  @import "DragonBit.css";
+</style>
 
-  table {
-    font-family: verdana,arial,sans-serif;
-    font-size:11px;
-    color:#333333;
-    border-width: 1px;
-    border-color: #666666;
-    border-collapse: collapse;
-  }
-  table th {
-    border-width: 1px;
-    padding: 8px;
-    border-style: solid;
-    border-color: #666666;
-    background-color: #dedede;
-  }
-  table td {
-    border-width: 1px;
-    padding: 8px;
-    border-style: solid;
-    border-color: #666666;
-    background-color: #ffffff;
-  }
-
-
-  #powertable, #defensivetable {display: none;}
-  #resetdiv{
-    text-align: right;
-  }
-  </style>
 <body>
 <div align="center" id="menu">
 <img src="Banner.png">
@@ -44,7 +15,21 @@
 <br>
 <input type="button" id="creditsbutton" value="Show Credits">
 <br>
+<input type="button" id="questbutton" value="Quest Board">
 </div>
+
+
+<ul id="quest_menu">
+This is the line for questing!
+<li id="quest1">
+ Mage Hunt <input id="quest1button" type="button" value="Select Quest!">
+<li id="quest2">
+test <input type="button" value="Select Quest!">
+<li id="quest3">
+test <input type="button" value="Select Quest!">
+<li id="quest4">
+test <input type="button" value="Select Quest!">
+</ul>
 
 
 <div align="center" id="credits">
@@ -141,8 +126,8 @@ Jeffrey Lott
 
 </body>
 
-<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-<script src="http://cdn.jsdelivr.net/qtip2/2.2.0/jquery.qtip.min.js"></script>
+<script src="jquery-2.1.0.js"></script>
+<script src="qtip.js"></script>
 <script src="DragonBitEngine.js"></script>
 
 </head>
